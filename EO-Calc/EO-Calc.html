@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <style>
+      th {
+        border: 1px solid black;
+        height: 25px;
+        width: 200px;
+      }
+      button {
+        display: inline;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <th colspan="2"><h1 id="result__numbers">0</h1></th>
+        <th colspan="2"><h1 id="display__numbers"></h1></th>
+      </tr>
+      <tr>
+        <th>
+          <button id="clear" class="">
+            Clear
+          </button>
+        </th>
+        <th>
+          <button
+            id="equals"
+            class="btn btn--operator btn--other btn--long-vertical"
+          >
+            =
+          </button>
+        </th>
+        <th>
+          <button
+            id="divide"
+            class="btn btn--other btn--operator"
+            onclick="insertOp('/')"
+          >
+            ÷
+          </button>
+        </th>
+        <th>
+          <button
+            id="multiply"
+            class="btn btn--other btn--operator"
+            onclick="insertOp('*')"
+          >
+            ×
+          </button>
+        </th>
+      </tr>
+      <tr>
+        <th><button id="one" class="btn btn--number">1</button></th>
+        <th><button id="two" class="btn btn--number">2</button></th>
+        <th><button id="three" class="btn btn--number">3</button></th>
+        <th>
+          <button
+            id="subtract"
+            class="btn btn--other btn--operator"
+            onclick="insertOp('-')"
+          >
+            -
+          </button>
+        </th>
+      </tr>
+      <tr>
+        <th><button id="four" class="btn btn--number">4</button></th>
+        <th><button id="five" class="btn btn--number">5</button></th>
+        <th><button id="six" class="btn btn--number">6</button></th>
+        <th>
+          <button
+            id="add"
+            class="btn btn--other btn--operator"
+            onclick="insertOp('+')"
+          >
+            +
+          </button>
+        </th>
+      </tr>
+      <tr>
+        <th><button id="seven" class="btn btn--number">7</button></th>
+        <th><button id="eight" class="btn btn--number">8</button></th>
+        <th><button id="nine" class="btn btn--number">9</button></th>
+        <th rowspan="2">
+          <button
+            id="equals"
+            class="btn btn--operator btn--other btn--long-vertical"
+          >
+            enter
+          </button>
+        </th>
+      </tr>
+      <tr>
+        <th>
+          <button id="zero" class="btn btn--number btn--long-horizontal">
+            0
+          </button>
+        </th>
+        <th><button id="undo" class="btn btn--decimal">undo</button></th>
+        <th><button id="decimal" class="btn btn--decimal">.</button></th>
+      </tr>
+    </table>
+
+    <script>
+      const decimal = document.getElementById('decimal');
+      const clear = document.getElementById('clear');
+      const undo = document.getElementById('undo');
+      const displayValElement = document.getElementById('display__numbers');
+      const resultValElement = document.getElementById('result__numbers');
+      const btnNumbers = document.getElementsByClassName('btn--number');
+      const btnOperators = document.getElementsByClassName('btn--operator');
+
+      var displayVal = '';
+      var pendingVal = '.';
+      var evalStringArray = [];
+
+      updateDisplayVal = e => {
+        var btnText = e.target.innerText;
+        if (displayVal === '') {
+          displayVal = '';
+        }
+
+        displayVal += btnText;
+        resultValElement.innerText = displayVal;
+      };
+
+      performOperation = e => {
+        var operator = e.target.innerText;
+
+        switch (operator) {
+          case '+':
+            pendingVal = displayVal;
+            displayVal = '';
+            displayValElement.innerText = displayVal;
+            evalStringArray.push(pendingVal);
+            evalStringArray.push('+');
+            break;
+          case '-':
+            pendingVal = displayVal;
+            displayVal = '';
+            displayValElement.innerText = displayVal;
+            evalStringArray.push(pendingVal);
+            evalStringArray.push('-');
+            break;
+          case '×':
+            pendingVal = displayVal;
+            displayVal = '';
+            displayValElement.innerText = displayVal;
+            evalStringArray.push(pendingVal);
+            evalStringArray.push('*');
+            break;
+          case '÷':
+            pendingVal = displayVal;
+            displayVal = '';
+            displayValElement.innerText = displayVal;
+            evalStringArray.push(pendingVal);
+            evalStringArray.push('/');
+            break;
+          case '=':
+            evalStringArray.push(displayVal);
+            var evaluation = eval(evalStringArray.join(' '));
+            displayVal = evaluation + '';
+            console.log(typeof displayVal);
+            displayValElement.innerText = displayVal;
+            evalStringArray = [];
+            break;
+          case 'enter':
+            evalStringArray.push(displayVal);
+            var evaluation = eval(evalStringArray.join(' '));
+            displayVal = evaluation + '';
+            console.log(typeof displayVal);
+            displayValElement.innerText = displayVal;
+            evalStringArray = [];
+            break;
+          default:
+            break;
+        }
+      };
+
+      //   function insertOp(op) {
+      //     displayValElement.value = exp + op;
+      //     operator = true;
+      //   }
+
+      for (let i = 0; i < btnNumbers.length; i++) {
+        btnNumbers[i].addEventListener('click', updateDisplayVal);
+      }
+
+      for (let i = 0; i < btnOperators.length; i++) {
+        btnOperators[i].addEventListener('click', performOperation);
+      }
+
+      clear.onclick = () => {
+        displayVal = '';
+        pendingVal = undefined;
+        evalStringArray = [];
+
+        displayValElement.innerHTML = displayVal;
+      };
+
+      decimal.onclick = () => {
+        if (!displayVal.includes('.')) {
+          displayVal += '.';
+        }
+        displayValElement.innerText = displayVal;
+      };
+
+      undo.onclick = () => {
+        let lengthOfDisplayVal = displayVal.length;
+        displayVal = displayVal.slice(0, lengthOfDisplayVal - 1);
+
+        if (displayVal === '') displayVal = '0';
+
+        displayValElement.innerText = displayVal;
+      };
+    </script>
+  </body>
+</html>
